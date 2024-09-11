@@ -1,0 +1,52 @@
+<div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+  <!-- Go Back Button -->
+  <div class="mb-4">
+    <a
+    href="/"
+    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
+  >
+    Go Back
+  </a>
+  
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
+    <h2 class="text-2xl font-semibold text-center text-gray-700 mb-4">Processed Tasks</h2>
+    <table class="min-w-full table-auto text-left">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="p-2">Name</th>
+          <th class="p-2">Status</th>
+          <th class="p-2">Processed At</th>
+          <th class="p-2">Actions</th> <!-- Added Actions header -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks" class="border-b hover:bg-gray-50">
+          <td class="p-2">{{ task.name }}</td>
+          <td class="p-2">{{ task.status }}</td>
+          <td class="p-2">{{ task.processedAt | date: 'short' }}</td>
+          <td class="p-2">
+            <button
+              class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded-md transition duration-300"
+              (click)="deleteTask(task.taskId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+
+  <!-- Delete All Tasks Button -->
+  <!-- <div class="mt-4 flex justify-center">
+    <button
+      class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
+      (click)="deleteAllTasks()"
+    >
+      Delete All Tasks
+    </button>
+  </div> -->
+</div>

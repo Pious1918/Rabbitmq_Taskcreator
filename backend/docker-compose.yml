@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq_new
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest  
+    networks:
+      - microservices-network
+  api-gateway:
+    build: 
+      context: ./apigateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - task-creator
+      - task-processor
+    networks:
+      - microservices-network
+
+  task-creator:
+    restart: on-failure
+    build: 
+      context: ./task-creator-service
+      dockerfile: Dockerfile
+    container_name: task-creator
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/task-creator-service
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+    networks:
+      - microservices-network
+
+  task-processor:
+    restart: on-failure
+    build: 
+      context: ./task-processor-service
+      dockerfile: Dockerfile
+    container_name: task-processor
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/task_processor_db
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - mongodb
+      # - rabbitmq
+    networks:
+      - microservices-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - microservices-network
+
+
+
+volumes:
+  mongodb-data:
+
+networks:
+  microservices-network:
+    driver: bridge
